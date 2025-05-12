@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write  # 修改这里
+  contents: write
   pages: write
   id-token: write
 
@@ -32,13 +32,23 @@ jobs:
           && sudo dpkg -i ${{ runner.temp }}/hugo.deb
           
       - name: Install Dart Sass
-        run: npm install -g sass  # 修改这里
+        run: npm install -g sass
 
       - name: Checkout
         uses: actions/checkout@v4
         with:
           submodules: recursive
           fetch-depth: 0
+          ref: master  # 关键修改点 🔼
+
+      - name: Debug directory structure  # 新增调试步骤
+        run: |
+          echo "当前目录结构："
+          ls -al
+          echo "---------------------------------"
+          echo "配置文件检查："
+          [[ -f hugo.toml ]] && echo "hugo.toml 存在" || echo "hugo.toml 不存在"
+          [[ -f config.toml ]] && echo "config.toml 存在" || echo "config.toml 不存在"
 
       - name: Setup Pages
         id: pages
@@ -47,7 +57,7 @@ jobs:
       - name: Install Node.js dependencies
         run: "[[ -f package-lock.json || -f npm-shrinkwrap.json ]] && npm ci || true"
 
-      - name: Cache Restore  # 修改这里
+      - name: Cache Restore
         id: cache-restore
         uses: actions/cache/restore@v4
         with:
@@ -65,9 +75,10 @@ jobs:
             --gc \
             --minify \
             --baseURL "${{ steps.pages.outputs.base_url }}/" \
-            --cacheDir ~/.cache/hugo  # 修改这里
+            --cacheDir ~/.cache/hugo \
+            --source ./  # 关键参数 🔼
 
-      - name: Cache Save  # 修改这里
+      - name: Cache Save
         id: cache-save
         uses: actions/cache/save@v4
         with:
