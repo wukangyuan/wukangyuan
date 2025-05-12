@@ -39,16 +39,14 @@ jobs:
         with:
           submodules: recursive
           fetch-depth: 0
-          ref: master  # 关键修改点 🔼
+          ref: master
 
-      - name: Debug directory structure  # 新增调试步骤
+      - name: Debug directory structure
         run: |
           echo "当前目录结构："
           ls -al
           echo "---------------------------------"
-          echo "配置文件检查："
-          [[ -f hugo.toml ]] && echo "hugo.toml 存在" || echo "hugo.toml 不存在"
-          [[ -f config.toml ]] && echo "config.toml 存在" || echo "config.toml 不存在"
+          [[ -f hugo.yaml ]] && echo "✅ hugo.yaml 存在" || echo "❌ hugo.yaml 不存在"  # 🔼 修改检查目标
 
       - name: Setup Pages
         id: pages
@@ -64,7 +62,7 @@ jobs:
           path: |
             ~/.cache/hugo
             resources/_gen
-          key: hugo-${{ hashFiles('hugo.toml') }}
+          key: hugo-${{ hashFiles('hugo.yaml') }}  # 🔼 修改哈希基准文件
 
       - name: Configure Git
         run: git config core.quotepath false
@@ -74,9 +72,10 @@ jobs:
           hugo \
             --gc \
             --minify \
+            --config hugo.yaml \  # 🔼 新增配置文件指定
             --baseURL "${{ steps.pages.outputs.base_url }}/" \
             --cacheDir ~/.cache/hugo \
-            --source ./  # 关键参数 🔼
+            --source ./
 
       - name: Cache Save
         id: cache-save
@@ -102,3 +101,4 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+
