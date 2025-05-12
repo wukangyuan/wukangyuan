@@ -1,0 +1,9 @@
+baseURL: "https://example.org/"  # 网站的基础 URL
+languageCode: "zh-cn"            # 网站的语言代码
+title: "My New Hugo Site"        # 网站的标题
+theme: "PaperMod"                # 网站的主题
+
+# 缓存设置
+[caches]
+  caches.images]
+    dir = ":cacheDir/images"     # 图片缓存的目录
